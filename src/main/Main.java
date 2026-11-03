@@ -6,15 +6,12 @@ import view.AddressListFrame;
 
 public class Main {
 
-    public static void main(String[] args) {
+	public static void main(String[] args) {
 
-        SwingUtilities.invokeLater(() -> {
+		SwingUtilities.invokeLater(() -> {
 
-            AddressListFrame frame = new AddressListFrame();
-            frame.setVisible(true);
-
-        });
-
-    }
-
+			AddressListFrame frame = new AddressListFrame();
+			frame.setVisible(true);
+		});
+	}
 }
