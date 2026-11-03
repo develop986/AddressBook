@@ -4,14 +4,22 @@ import javax.swing.SwingUtilities;
 
 import view.AddressListFrame;
 
+/**
+ * アドレス帳アプリケーションの起動クラス.
+ */
 public class Main {
 
-	public static void main(String[] args) {
+    /**
+     * アプリケーションを起動する.
+     *
+     * @param args コマンドライン引数
+     */
+    public static void main(final String[] args) {
 
-		SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() -> {
 
-			AddressListFrame frame = new AddressListFrame();
-			frame.setVisible(true);
-		});
-	}
+            AddressListFrame frame = new AddressListFrame();
+            frame.setVisible(true);
+        });
+    }
 }

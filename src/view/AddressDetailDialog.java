@@ -20,246 +20,265 @@ import javax.swing.border.TitledBorder;
 
 import model.Address;
 
+/**
+ * アドレス帳の詳細情報を入力および編集するダイアログ.
+ */
 public class AddressDetailDialog extends JDialog {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+
+    private JTextField txtName;
+    private JTextField txtKana;
+    private JTextField txtTel;
+    private JTextField txtEmail;
+    private JTextField txtZipCode;
+    private JTextField txtAddress;
 
-	private JTextField txtName;
-	private JTextField txtKana;
-	private JTextField txtTel;
-	private JTextField txtEmail;
-	private JTextField txtZipCode;
-	private JTextField txtAddress;
+    private JTextArea txtMemo;
 
-	private JTextArea txtMemo;
+    private JButton btnSave;
+    private JButton btnCancel;
 
-	private JButton btnSave;
-	private JButton btnCancel;
+    private JLabel lblMessage;
 
-	private JLabel lblMessage;
+    private DialogMode mode;
 
-	private DialogMode mode;
+    private Address address;
+    private boolean saved = false;
 
-	private Address address;
-	private boolean saved = false;
+    /**
+     * アドレス詳細ダイアログを生成する.
+     *
+     * @param owner   親フレーム
+     * @param mode    表示モード
+     * @param address 編集対象のアドレス情報
+     */
+    public AddressDetailDialog(final Frame owner, final DialogMode mode, final Address address) {
 
-	public AddressDetailDialog(Frame owner, DialogMode mode, Address address) {
+        super(owner, true);
 
-		super(owner, true);
+        this.mode = mode;
+        this.address = address;
 
-		this.mode = mode;
-		this.address = address;
+        initialize();
 
-		initialize();
+        if (address != null) {
+            loadAddress(address);
+        }
+    }
 
-		if (address != null) {
-			loadAddress(address);
-		}
-	}
+    /**
+     * アドレス情報を画面へ表示する.
+     *
+     * @param address 表示対象のアドレス情報
+     */
+    public void loadAddress(final Address address) {
 
-	public void loadAddress(Address address) {
+        txtName.setText(address.getName());
+        txtKana.setText(address.getKana());
+        txtTel.setText(address.getTel());
+        txtEmail.setText(address.getEmail());
+        txtZipCode.setText(address.getZipCode());
+        txtAddress.setText(address.getAddress());
+        txtMemo.setText(address.getMemo());
+    }
 
-		txtName.setText(address.getName());
-		txtKana.setText(address.getKana());
-		txtTel.setText(address.getTel());
-		txtEmail.setText(address.getEmail());
-		txtZipCode.setText(address.getZipCode());
-		txtAddress.setText(address.getAddress());
-		txtMemo.setText(address.getMemo());
-	}
+    /**
+     * 画面に入力された内容からアドレス情報を取得する.
+     *
+     * @return アドレス情報
+     */
+    public Address getAddress() {
 
-	public Address getAddress() {
+        Address result = address == null ? new Address() : address;
 
-		Address result = address == null ? new Address() : address;
+        result.setName(txtName.getText().trim());
+        result.setKana(txtKana.getText().trim());
+        result.setTel(txtTel.getText().trim());
+        result.setEmail(txtEmail.getText().trim());
+        result.setZipCode(txtZipCode.getText().trim());
+        result.setAddress(txtAddress.getText().trim());
+        result.setMemo(txtMemo.getText());
 
-		result.setName(txtName.getText().trim());
-		result.setKana(txtKana.getText().trim());
-		result.setTel(txtTel.getText().trim());
-		result.setEmail(txtEmail.getText().trim());
-		result.setZipCode(txtZipCode.getText().trim());
-		result.setAddress(txtAddress.getText().trim());
-		result.setMemo(txtMemo.getText());
+        return result;
+    }
 
-		return result;
-	}
+    /**
+     * 画面を初期化する.
+     */
+    private void initialize() {
 
-	private void initialize() {
+        setTitle(mode == DialogMode.NEW ? "アドレス新規登録" : "アドレス編集");
 
-		setTitle(mode == DialogMode.NEW ? "アドレス新規登録" : "アドレス編集");
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setSize(700, 600);
+        setLocationRelativeTo(getOwner());
 
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setSize(700, 600);
-		setLocationRelativeTo(getOwner());
+        JPanel contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+        contentPane.setLayout(new BorderLayout(10, 10));
 
-		JPanel contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-		contentPane.setLayout(new BorderLayout(10, 10));
+        setContentPane(contentPane);
 
-		setContentPane(contentPane);
+        JPanel pnlCenter = new JPanel();
+        pnlCenter.setLayout(new BorderLayout(10, 10));
 
-		// ------------------------------------
-		// 入力エリア全体
-		// ------------------------------------
+        contentPane.add(pnlCenter, BorderLayout.CENTER);
 
-		JPanel pnlCenter = new JPanel();
-		pnlCenter.setLayout(new BorderLayout(10, 10));
+        JPanel pnlForm = new JPanel();
+        pnlForm.setBorder(new TitledBorder("基本情報"));
 
-		contentPane.add(pnlCenter, BorderLayout.CENTER);
+        GridBagLayout gbl = new GridBagLayout();
+        gbl.columnWidths = new int[] { 120, 400 };
+        pnlForm.setLayout(gbl);
 
-		// ------------------------------------
-		// 基本情報
-		// ------------------------------------
+        int row = 0;
 
-		JPanel pnlForm = new JPanel();
-		pnlForm.setBorder(new TitledBorder("基本情報"));
+        txtName = new JTextField(30);
+        addField(pnlForm, "氏名", txtName, row++);
 
-		GridBagLayout gbl = new GridBagLayout();
-		gbl.columnWidths = new int[] { 120, 400 };
-		pnlForm.setLayout(gbl);
+        txtKana = new JTextField(30);
+        addField(pnlForm, "フリガナ", txtKana, row++);
 
-		int row = 0;
+        txtTel = new JTextField(30);
+        addField(pnlForm, "電話番号", txtTel, row++);
 
-		txtName = new JTextField(30);
-		addField(pnlForm, "氏名", txtName, row++);
+        txtEmail = new JTextField(30);
+        addField(pnlForm, "メールアドレス", txtEmail, row++);
 
-		txtKana = new JTextField(30);
-		addField(pnlForm, "フリガナ", txtKana, row++);
+        txtZipCode = new JTextField(30);
+        addField(pnlForm, "郵便番号", txtZipCode, row++);
 
-		txtTel = new JTextField(30);
-		addField(pnlForm, "電話番号", txtTel, row++);
+        txtAddress = new JTextField(30);
+        addField(pnlForm, "住所", txtAddress, row++);
 
-		txtEmail = new JTextField(30);
-		addField(pnlForm, "メールアドレス", txtEmail, row++);
+        pnlCenter.add(pnlForm, BorderLayout.NORTH);
 
-		txtZipCode = new JTextField(30);
-		addField(pnlForm, "郵便番号", txtZipCode, row++);
+        JPanel pnlMemo = new JPanel(new BorderLayout(5, 5));
+        pnlMemo.setBorder(new TitledBorder("備考"));
 
-		txtAddress = new JTextField(30);
-		addField(pnlForm, "住所", txtAddress, row++);
+        txtMemo = new JTextArea();
+        txtMemo.setLineWrap(true);
+        txtMemo.setWrapStyleWord(true);
 
-		pnlCenter.add(pnlForm, BorderLayout.NORTH);
+        JScrollPane scrollPane = new JScrollPane(txtMemo);
 
-		// ------------------------------------
-		// 備考
-		// ------------------------------------
+        pnlMemo.add(scrollPane, BorderLayout.CENTER);
 
-		JPanel pnlMemo = new JPanel(new BorderLayout(5, 5));
-		pnlMemo.setBorder(new TitledBorder("備考"));
+        pnlCenter.add(pnlMemo, BorderLayout.CENTER);
 
-		txtMemo = new JTextArea();
-		txtMemo.setLineWrap(true);
-		txtMemo.setWrapStyleWord(true);
+        JPanel pnlBottom = new JPanel(new BorderLayout());
 
-		JScrollPane scrollPane = new JScrollPane(txtMemo);
+        JPanel pnlButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-		pnlMemo.add(scrollPane, BorderLayout.CENTER);
+        btnSave = new JButton(mode == DialogMode.NEW ? "登録" : "保存");
 
-		pnlCenter.add(pnlMemo, BorderLayout.CENTER);
+        btnCancel = new JButton("キャンセル");
 
-		// ------------------------------------
-		// 下部
-		// ------------------------------------
+        pnlButton.add(btnSave);
+        pnlButton.add(btnCancel);
 
-		JPanel pnlBottom = new JPanel(new BorderLayout());
+        pnlBottom.add(pnlButton, BorderLayout.NORTH);
 
-		JPanel pnlButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        lblMessage = new JLabel(" ");
+        lblMessage.setHorizontalAlignment(SwingConstants.LEFT);
 
-		btnSave = new JButton(mode == DialogMode.NEW ? "登録" : "保存");
+        pnlBottom.add(lblMessage, BorderLayout.SOUTH);
 
-		btnCancel = new JButton("キャンセル");
+        contentPane.add(pnlBottom, BorderLayout.SOUTH);
 
-		pnlButton.add(btnSave);
-		pnlButton.add(btnCancel);
+        btnSave.addActionListener(e -> {
 
-		pnlBottom.add(pnlButton, BorderLayout.NORTH);
+            saved = true;
 
-		lblMessage = new JLabel(" ");
-		lblMessage.setHorizontalAlignment(SwingConstants.LEFT);
+            dispose();
+        });
 
-		pnlBottom.add(lblMessage, BorderLayout.SOUTH);
+        btnCancel.addActionListener(e -> {
 
-		contentPane.add(pnlBottom, BorderLayout.SOUTH);
+            saved = false;
 
-		btnSave.addActionListener(e -> {
+            dispose();
+        });
+    }
 
-			saved = true;
+    /**
+     * 入力項目を追加する.
+     *
+     * @param panel     配置先パネル
+     * @param labelText ラベル文字列
+     * @param field     入力欄
+     * @param row       行番号
+     */
+    private void addField(final JPanel panel, final String labelText, final JTextField field,
+            final int row) {
 
-			dispose();
-		});
+        GridBagConstraints lblGbc = new GridBagConstraints();
 
-		btnCancel.addActionListener(e -> {
+        lblGbc.gridx = 0;
+        lblGbc.gridy = row;
+        lblGbc.anchor = GridBagConstraints.WEST;
+        lblGbc.insets = new Insets(5, 5, 5, 5);
 
-			saved = false;
+        panel.add(new JLabel(labelText), lblGbc);
 
-			dispose();
-		});
-	}
+        GridBagConstraints txtGbc = new GridBagConstraints();
 
-	private void addField(JPanel panel, String labelText, JTextField field, int row) {
+        txtGbc.gridx = 1;
+        txtGbc.gridy = row;
+        txtGbc.weightx = 1.0;
+        txtGbc.fill = GridBagConstraints.HORIZONTAL;
+        txtGbc.insets = new Insets(5, 5, 5, 5);
 
-		GridBagConstraints lblGbc = new GridBagConstraints();
+        panel.add(field, txtGbc);
+    }
 
-		lblGbc.gridx = 0;
-		lblGbc.gridy = row;
-		lblGbc.anchor = GridBagConstraints.WEST;
-		lblGbc.insets = new Insets(5, 5, 5, 5);
+    /**
+     * 保存ボタンが押下されたかを返す.
+     *
+     * @return 保存済みの場合 true
+     */
+    public boolean isSaved() {
+        return saved;
+    }
 
-		panel.add(new JLabel(labelText), lblGbc);
+    public JTextField getTxtName() {
+        return txtName;
+    }
 
-		GridBagConstraints txtGbc = new GridBagConstraints();
+    public JTextField getTxtKana() {
+        return txtKana;
+    }
 
-		txtGbc.gridx = 1;
-		txtGbc.gridy = row;
-		txtGbc.weightx = 1.0;
-		txtGbc.fill = GridBagConstraints.HORIZONTAL;
-		txtGbc.insets = new Insets(5, 5, 5, 5);
+    public JTextField getTxtTel() {
+        return txtTel;
+    }
 
-		panel.add(field, txtGbc);
-	}
+    public JTextField getTxtEmail() {
+        return txtEmail;
+    }
 
-	public boolean isSaved() {
-		return saved;
-	}
+    public JTextField getTxtZipCode() {
+        return txtZipCode;
+    }
 
-	// Getter
+    public JTextField getTxtAddress() {
+        return txtAddress;
+    }
 
-	public JTextField getTxtName() {
-		return txtName;
-	}
+    public JTextArea getTxtMemo() {
+        return txtMemo;
+    }
 
-	public JTextField getTxtKana() {
-		return txtKana;
-	}
+    public JButton getBtnSave() {
+        return btnSave;
+    }
 
-	public JTextField getTxtTel() {
-		return txtTel;
-	}
+    public JButton getBtnCancel() {
+        return btnCancel;
+    }
 
-	public JTextField getTxtEmail() {
-		return txtEmail;
-	}
-
-	public JTextField getTxtZipCode() {
-		return txtZipCode;
-	}
-
-	public JTextField getTxtAddress() {
-		return txtAddress;
-	}
-
-	public JTextArea getTxtMemo() {
-		return txtMemo;
-	}
-
-	public JButton getBtnSave() {
-		return btnSave;
-	}
-
-	public JButton getBtnCancel() {
-		return btnCancel;
-	}
-
-	public JLabel getLblMessage() {
-		return lblMessage;
-	}
+    public JLabel getLblMessage() {
+        return lblMessage;
+    }
 }

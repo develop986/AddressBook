@@ -17,176 +17,232 @@ import javax.swing.table.DefaultTableModel;
 
 import model.Address;
 
+/**
+ * アドレス帳の一覧画面.
+ */
 public class AddressListFrame extends JFrame {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private JPanel contentPane;
+    private JPanel contentPane;
 
-	private JTextField txtSearchName;
+    private JTextField txtSearchName;
 
-	private JTable tblAddress;
+    private JTable tblAddress;
 
-	private JButton btnSearch;
-	private JButton btnClear;
-	private JButton btnNew;
-	private JButton btnEdit;
-	private JButton btnDelete;
-	private JButton btnExit;
-	private JButton btnCsvImport;
-	private JButton btnCsvExport;
+    private JButton btnSearch;
+    private JButton btnClear;
+    private JButton btnNew;
+    private JButton btnEdit;
+    private JButton btnDelete;
+    private JButton btnExit;
+    private JButton btnCsvImport;
+    private JButton btnCsvExport;
 
-	private JLabel lblMessage;
+    private JLabel lblMessage;
 
-	public AddressListFrame() {
+    /**
+     * アドレス帳一覧画面を生成する.
+     */
+    public AddressListFrame() {
 
-		initialize();
-	}
+        initialize();
+    }
 
-	private void initialize() {
+    private void initialize() {
 
-		setTitle("アドレス帳");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1000, 600);
-		setLocationRelativeTo(null);
+        setTitle("アドレス帳");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 1000, 600);
+        setLocationRelativeTo(null);
 
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-		contentPane.setLayout(new BorderLayout(10, 10));
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+        contentPane.setLayout(new BorderLayout(10, 10));
 
-		setContentPane(contentPane);
+        setContentPane(contentPane);
 
-		createSearchPanel();
-		createTablePanel();
-		createBottomPanel();
+        createSearchPanel();
+        createTablePanel();
+        createBottomPanel();
 
-		btnNew.addActionListener(e -> openNewDialog());
-	}
+        btnNew.addActionListener(e -> openNewDialog());
+    }
 
-	private void openNewDialog() {
+    private void openNewDialog() {
 
-		AddressDetailDialog dialog = new AddressDetailDialog(this, DialogMode.NEW, null);
+        AddressDetailDialog dialog = new AddressDetailDialog(this, DialogMode.NEW, null);
 
-		dialog.setVisible(true);
+        dialog.setVisible(true);
 
-		if (dialog.isSaved()) {
+        if (dialog.isSaved()) {
 
-			Address address = dialog.getAddress();
+            Address address = dialog.getAddress();
 
-			System.out.println(address.getName());
+            System.out.println(address.getName());
 
-		}
-	}
+        }
+    }
 
-	private void createSearchPanel() {
+    private void createSearchPanel() {
 
-		JPanel pnlSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		pnlSearch.setBorder(new TitledBorder("検索条件"));
+        JPanel pnlSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		pnlSearch.add(new JLabel("氏名"));
+        pnlSearch.setBorder(new TitledBorder("検索条件"));
 
-		txtSearchName = new JTextField(20);
-		pnlSearch.add(txtSearchName);
+        pnlSearch.add(new JLabel("氏名"));
 
-		btnSearch = new JButton("検索");
-		pnlSearch.add(btnSearch);
+        txtSearchName = new JTextField(20);
+        pnlSearch.add(txtSearchName);
 
-		btnClear = new JButton("全件表示");
-		pnlSearch.add(btnClear);
+        btnSearch = new JButton("検索");
+        pnlSearch.add(btnSearch);
 
-		contentPane.add(pnlSearch, BorderLayout.NORTH);
-	}
+        btnClear = new JButton("全件表示");
+        pnlSearch.add(btnClear);
 
-	private void createTablePanel() {
+        contentPane.add(pnlSearch, BorderLayout.NORTH);
+    }
 
-		String[] columns = { "氏名", "フリガナ", "電話番号", "メールアドレス" };
+    private void createTablePanel() {
 
-		DefaultTableModel model = new DefaultTableModel(columns, 0) {
-			private static final long serialVersionUID = 1L;
+        String[] columns = { "氏名", "フリガナ", "電話番号", "メールアドレス" };
 
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};
+        DefaultTableModel model = new DefaultTableModel(columns, 0) {
 
-		tblAddress = new JTable(model);
-		tblAddress.setRowHeight(24);
+            private static final long serialVersionUID = 1L;
 
-		JScrollPane scrollPane = new JScrollPane(tblAddress);
-		scrollPane.setBorder(new TitledBorder("連絡先一覧"));
+            @Override
+            public boolean isCellEditable(int row, int column) {
 
-		contentPane.add(scrollPane, BorderLayout.CENTER);
-	}
+                return false;
+            }
+        };
 
-	private void createBottomPanel() {
+        tblAddress = new JTable(model);
+        tblAddress.setRowHeight(24);
 
-		JPanel pnlBottom = new JPanel(new BorderLayout());
+        JScrollPane scrollPane = new JScrollPane(tblAddress);
 
-		JPanel pnlButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        scrollPane.setBorder(new TitledBorder("連絡先一覧"));
 
-		btnNew = new JButton("新規");
-		btnEdit = new JButton("編集");
-		btnDelete = new JButton("削除");
+        contentPane.add(scrollPane, BorderLayout.CENTER);
+    }
 
-		btnCsvImport = new JButton("CSV入力");
-		btnCsvExport = new JButton("CSV出力");
+    private void createBottomPanel() {
 
-		btnExit = new JButton("終了");
+        JPanel pnlBottom = new JPanel(new BorderLayout());
 
-		pnlButton.add(btnNew);
-		pnlButton.add(btnEdit);
-		pnlButton.add(btnDelete);
+        JPanel pnlButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-		pnlButton.add(btnCsvImport);
-		pnlButton.add(btnCsvExport);
+        btnNew = new JButton("新規");
+        btnEdit = new JButton("編集");
+        btnDelete = new JButton("削除");
 
-		pnlButton.add(btnExit);
+        btnCsvImport = new JButton("CSV入力");
+        btnCsvExport = new JButton("CSV出力");
 
-		pnlBottom.add(pnlButton, BorderLayout.NORTH);
+        btnExit = new JButton("終了");
 
-		lblMessage = new JLabel("準備完了");
-		lblMessage.setHorizontalAlignment(SwingConstants.LEFT);
-		lblMessage.setBorder(new EmptyBorder(5, 5, 5, 5));
+        pnlButton.add(btnNew);
+        pnlButton.add(btnEdit);
+        pnlButton.add(btnDelete);
 
-		pnlBottom.add(lblMessage, BorderLayout.SOUTH);
+        pnlButton.add(btnCsvImport);
+        pnlButton.add(btnCsvExport);
 
-		contentPane.add(pnlBottom, BorderLayout.SOUTH);
-	}
+        pnlButton.add(btnExit);
 
-	public JTable getTblAddress() {
-		return tblAddress;
-	}
+        pnlBottom.add(pnlButton, BorderLayout.NORTH);
 
-	public JTextField getTxtSearchName() {
-		return txtSearchName;
-	}
+        lblMessage = new JLabel("準備完了");
+        lblMessage.setHorizontalAlignment(SwingConstants.LEFT);
 
-	public JButton getBtnSearch() {
-		return btnSearch;
-	}
+        lblMessage.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-	public JButton getBtnClear() {
-		return btnClear;
-	}
+        pnlBottom.add(lblMessage, BorderLayout.SOUTH);
 
-	public JButton getBtnNew() {
-		return btnNew;
-	}
+        contentPane.add(pnlBottom, BorderLayout.SOUTH);
+    }
 
-	public JButton getBtnEdit() {
-		return btnEdit;
-	}
+    /**
+     * 一覧テーブルを取得する.
+     *
+     * @return 一覧テーブル
+     */
+    public JTable getTblAddress() {
+        return tblAddress;
+    }
 
-	public JButton getBtnDelete() {
-		return btnDelete;
-	}
+    /**
+     * 検索条件の氏名入力欄を取得する.
+     *
+     * @return 氏名入力欄
+     */
+    public JTextField getTxtSearchName() {
+        return txtSearchName;
+    }
 
-	public JButton getBtnExit() {
-		return btnExit;
-	}
+    /**
+     * 検索ボタンを取得する.
+     *
+     * @return 検索ボタン
+     */
+    public JButton getBtnSearch() {
+        return btnSearch;
+    }
 
-	public JLabel getLblMessage() {
-		return lblMessage;
-	}
+    /**
+     * 全件表示ボタンを取得する.
+     *
+     * @return 全件表示ボタン
+     */
+    public JButton getBtnClear() {
+        return btnClear;
+    }
+
+    /**
+     * 新規ボタンを取得する.
+     *
+     * @return 新規ボタン
+     */
+    public JButton getBtnNew() {
+        return btnNew;
+    }
+
+    /**
+     * 編集ボタンを取得する.
+     *
+     * @return 編集ボタン
+     */
+    public JButton getBtnEdit() {
+        return btnEdit;
+    }
+
+    /**
+     * 削除ボタンを取得する.
+     *
+     * @return 削除ボタン
+     */
+    public JButton getBtnDelete() {
+        return btnDelete;
+    }
+
+    /**
+     * 終了ボタンを取得する.
+     *
+     * @return 終了ボタン
+     */
+    public JButton getBtnExit() {
+        return btnExit;
+    }
+
+    /**
+     * メッセージラベルを取得する.
+     *
+     * @return メッセージラベル
+     */
+    public JLabel getLblMessage() {
+        return lblMessage;
+    }
 }
